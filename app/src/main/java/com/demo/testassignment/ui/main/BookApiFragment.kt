@@ -2,12 +2,10 @@ package com.demo.testassignment.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,22 +13,20 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.demo.testassignment.R
 import com.demo.testassignment.activity.NewsDetailActivity
 import com.demo.testassignment.adapter.BookAdapter
-import com.demo.testassignment.adapter.NewsAdapter
 import com.demo.testassignment.api.ApiClient
 import com.demo.testassignment.api.ApiInterface
+import com.demo.testassignment.api.GetRetrofit.instance
+import com.demo.testassignment.api.GetRetrofit.updateBaseUrl
 import com.demo.testassignment.model.book.BookItem
 import com.demo.testassignment.model.book.Item
-import com.demo.testassignment.model.news.Article
-import com.demo.testassignment.model.news.News
-import com.demo.testassignment.utils.Utils
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.error.view.*
 import kotlinx.android.synthetic.main.fragment_news.*
 import kotlinx.android.synthetic.main.fragment_news.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.ArrayList
+import java.util.*
+
 
 class BookApiFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -74,8 +70,12 @@ class BookApiFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         root.swipe_refresh_layout.setRefreshing(true)
         val BASE_URL = "https://www.googleapis.com/"
 
+        updateBaseUrl(BASE_URL)
+        val retrofit = instance // this provides new retrofit instance with given url
+
+
         val apiInterface: ApiInterface? =
-            ApiClient.getApiClient(BASE_URL)?.create(ApiInterface::class.java)
+            retrofit?.create(ApiInterface::class.java)
         val bookName = "harry potter"
         val call: Call<BookItem?>? = apiInterface?.getBook(bookName)
 
@@ -132,9 +132,9 @@ class BookApiFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 val intent = Intent(activity, NewsDetailActivity::class.java)
                 val model: Item = item.get(position)
 
-                intent.putExtra("url",  model.volumeInfo?.infoLink)
-                intent.putExtra("title",  model.volumeInfo?.title)
-                intent.putExtra("img",  model.volumeInfo?.imageLinks?.thumbnail)
+                intent.putExtra("url", model.volumeInfo?.infoLink)
+                intent.putExtra("title", model.volumeInfo?.title)
+                intent.putExtra("img", model.volumeInfo?.imageLinks?.thumbnail)
                 intent.putExtra("date", model.volumeInfo?.publishedDate)
                 intent.putExtra("source", model.volumeInfo?.publisher?.get(0))
                 intent.putExtra("author", model.volumeInfo?.authors?.get(0))

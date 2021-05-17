@@ -69,4 +69,6 @@ dependencies {
 
     //Times Formater
     implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
 }

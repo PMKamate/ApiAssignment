@@ -16,6 +16,7 @@ import com.demo.testassignment.adapter.NewsAdapter
 import com.demo.testassignment.adapter.NewsAdapter.OnItemClickListener
 import com.demo.testassignment.api.ApiClient
 import com.demo.testassignment.api.ApiInterface
+import com.demo.testassignment.api.GetRetrofit
 import com.demo.testassignment.model.news.Article
 import com.demo.testassignment.model.news.News
 import com.demo.testassignment.utils.Utils
@@ -72,9 +73,10 @@ class NewsApiFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         root.errorLayout.setVisibility(View.GONE)
         root.swipe_refresh_layout.setRefreshing(true)
         val BASE_URL = "https://newsapi.org/v2/"
+        val retrofit = GetRetrofit.instance // this provides new retrofit instance with given url
 
         val apiInterface: ApiInterface? =
-            ApiClient.getApiClient(BASE_URL)?.create(ApiInterface::class.java)
+            retrofit?.create(ApiInterface::class.java)
         val country: String = Utils.getCountry().toString()
         val call: Call<News?>?
         call = apiInterface?.getNews(country, API_KEY)
